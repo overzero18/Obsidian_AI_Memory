@@ -1,0 +1,7 @@
+---
+trigger: always_on
+---
+
+# Memoria persistente compartida
+
+Usa `{{VAULT_PATH}}` como memoria externa. Al comenzar, lee `00 - Inicio.md` y `AI-MEMORY-PROTOCOL.md` dentro de esa bóveda; recupera solo notas relacionadas. Guarda únicamente información duradera, evita duplicados y nunca escribas secretos.

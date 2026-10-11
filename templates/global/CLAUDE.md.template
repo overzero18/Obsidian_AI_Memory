@@ -1,7 +1,0 @@
-# Memoria global en Obsidian
-
-- Usa la bóveda `{{CLAUDE_VAULT}}` como memoria persistente.
-- Al comenzar una tarea, consulta primero `{{CLAUDE_VAULT}}\00 - Inicio.md` y después solo las notas relacionadas.
-- Registra únicamente decisiones, preferencias, soluciones verificadas y avances útiles a largo plazo.
-- Nunca guardes contraseñas, tokens ni credenciales.
-- Si la bóveda no está disponible, continúa cuando sea posible e informa de que la memoria no pudo consultarse o actualizarse.

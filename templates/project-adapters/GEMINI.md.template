@@ -1,0 +1,7 @@
+# Memoria persistente compartida
+
+- Usa `{{VAULT_PATH}}` como memoria externa y fuente de contexto duradero.
+- Antes de una tarea donde el historial sea relevante, lee `00 - Inicio.md` y `AI-MEMORY-PROTOCOL.md` dentro de esa bóveda.
+- Recupera únicamente las notas relacionadas con la tarea actual.
+- Conserva solo decisiones confirmadas, preferencias estables, soluciones verificadas y avances útiles a largo plazo.
+- Nunca guardes credenciales, tokens, claves API ni otros secretos.

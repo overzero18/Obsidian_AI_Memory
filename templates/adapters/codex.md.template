@@ -1,0 +1,8 @@
+# Memoria persistente compartida
+
+- Usa `{{VAULT_PATH}}` como memoria externa y fuente de contexto duradero.
+- Al comenzar una tarea donde el historial pueda ser relevante, consulta primero `00 - Inicio.md` dentro de esa bóveda y después solo las notas relacionadas.
+- Sigue `AI-MEMORY-PROTOCOL.md` dentro de esa bóveda al leer o actualizar la memoria.
+- No cargues toda la bóveda sin necesidad.
+- Nunca guardes contraseñas, tokens, credenciales ni secretos.
+- Si la bóveda no está disponible, continúa cuando sea posible e informa de que la memoria no pudo consultarse o actualizarse.

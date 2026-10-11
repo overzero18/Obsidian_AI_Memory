@@ -1,51 +1,261 @@
-# Obsidian AI Memory for Windows
+# Obsidian AI Memory
 
-Instalador para usar dos bóvedas locales de Obsidian como memoria persistente de [Codex](https://learn.chatgpt.com/docs/agent-configuration/agents-md) y [Claude Code](https://code.claude.com/docs/en/memory) en Windows 11.
+Sistema local y neutral para usar una única bóveda de Obsidian como memoria persistente compartida entre asistentes de IA en Windows, Linux y macOS.
 
-El repositorio contiene únicamente plantillas vacías. No incluye notas, proyectos, credenciales ni rutas personales.
+No añade memoria interna a ningún modelo. Proporciona una fuente de verdad en Markdown, un protocolo seguro de lectura y escritura, y adaptadores para las herramientas que admiten instrucciones locales.
+
+## Compatibilidad
+
+- **Codex:** configuración automática mediante `~/.codex/AGENTS.md` (o `%USERPROFILE%\.codex\AGENTS.md` en Windows).
+- **Claude Code:** configuración automática mediante `~/.claude/CLAUDE.md` (o `%USERPROFILE%\.claude\CLAUDE.md` en Windows).
+- **Otras IA:** utiliza `AI-ONBOARDING.md` cuando la herramienta pueda leer archivos locales, o proporciona manualmente las notas relevantes.
+
+Gemini CLI, Cursor, Windsurf, Cline, Copilot y herramientas futuras pueden utilizar la misma bóveda. Sus archivos de configuración no se modifican automáticamente porque cambian entre productos y versiones; el protocolo universal evita depender de rutas no verificadas.
 
 ## Qué instala
 
-- Una bóveda para Codex con instrucciones `AGENTS.md`.
-- Una bóveda para Claude Code con instrucciones `CLAUDE.md`.
-- Instrucciones globales en `%USERPROFILE%\.codex\AGENTS.md`.
-- Instrucciones globales en `%USERPROFILE%\.claude\CLAUDE.md`.
+- Una sola bóveda compartida llamada `MemoriaIA`.
+- Un índice inicial y un índice de proyectos.
+- Un protocolo que define qué recordar y qué descartar.
+- Una plantilla de proyectos conectados mediante enlaces de Obsidian.
+- Un documento de incorporación para asistentes genéricos.
+- Bloques administrados en las instrucciones globales de Codex y Claude Code.
 
-## Instalación
+El instalador conserva el contenido existente de los archivos de configuración. Solo añade o actualiza el bloque delimitado por:
+
+```markdown
+<!-- OBSIDIAN-AI-MEMORY:START -->
+...
+<!-- OBSIDIAN-AI-MEMORY:END -->
+```
+
+Antes de modificar un archivo existente crea una copia fechada.
+
+## Instalación rápida
+
+### Windows
 
 1. Descarga o clona este repositorio.
-2. Haz doble clic en `INSTALL.cmd` para usar la ubicación predeterminada.
+2. Haz doble clic en `INSTALL.cmd`.
+3. Abre `%USERPROFILE%\Documents\ObsidianAI\MemoriaIA` como bóveda en Obsidian.
+4. Reinicia las herramientas configuradas.
 
-También puedes abrir PowerShell dentro de la carpeta y ejecutar:
+Desde PowerShell:
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Install-ObsidianAIMemory.ps1
 ```
 
-Por defecto crea las bóvedas en `%USERPROFILE%\Documents\ObsidianAI`. Para elegir otra ruta:
+### Linux y macOS
 
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Install-ObsidianAIMemory.ps1 -BasePath "G:\Obsidian\AI"
+```bash
+git clone https://github.com/overzero18/obsidian-ai-memory-windows.git
+cd obsidian-ai-memory-windows
+./INSTALL.sh
 ```
 
-Si las carpetas ya contienen archivos, el instalador se detiene. Para combinarlas de forma consciente, creando antes una copia completa:
+Si el sistema elimina el permiso de ejecución, también puede iniciarse sin modificar permisos:
 
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Install-ObsidianAIMemory.ps1 -BasePath "G:\Obsidian\AI" -MergeExisting
+```bash
+sh ./INSTALL.sh
 ```
 
-Después, abre las dos carpetas creadas como bóvedas en Obsidian y reinicia Codex y Claude Code.
+La ubicación predeterminada es `~/Documents/ObsidianAI/MemoriaIA`.
+
+### Modo portátil
+
+Para llevar una bóveda vacía junto al repositorio o archivo descargado, sin modificar configuraciones globales:
+
+```bash
+./INSTALL.sh --portable
+```
+
+```powershell
+.\scripts\Install-ObsidianAIMemory.ps1 -Portable
+```
+
+Se crea `portable-data/MemoriaIA` junto al repositorio, se activa únicamente el protocolo genérico y no se toca `~/.codex`, `~/.claude` ni sus equivalentes de Windows. `portable-data/` se excluye de Git.
+
+### Elegir ubicación y nombre
+
+Windows:
+
+```powershell
+.\scripts\Install-ObsidianAIMemory.ps1 `
+  -BasePath "G:\Obsidian" `
+  -VaultName "MemoriaCompartida"
+```
+
+Linux y macOS:
+
+```bash
+./INSTALL.sh --base-path "$HOME/Obsidian" --vault-name "MemoriaCompartida"
+```
+
+### Elegir adaptadores
+
+Solo Codex:
+
+```powershell
+.\scripts\Install-ObsidianAIMemory.ps1 -Tools Codex,Generic
+```
+
+```bash
+./INSTALL.sh --tools codex,generic
+```
+
+Solo el protocolo universal, sin modificar configuraciones de herramientas:
+
+```powershell
+.\scripts\Install-ObsidianAIMemory.ps1 -Tools Generic
+```
+
+```bash
+./INSTALL.sh --tools generic
+```
+
+### Integrar una bóveda existente
+
+Por seguridad, el instalador se detiene si la carpeta de destino contiene archivos. Para crear una copia completa y añadir únicamente las plantillas que falten:
+
+```powershell
+.\scripts\Install-ObsidianAIMemory.ps1 -MergeExisting
+```
+
+```bash
+./INSTALL.sh --merge-existing
+```
+
+`-MergeExisting` y `--merge-existing` nunca reemplazan notas existentes dentro de la bóveda.
+
+## Instalación manual, sin ejecutar el instalador
+
+También puede configurarse únicamente con comandos. Sustituye la ruta por la ubicación deseada.
+
+Linux y macOS:
+
+```bash
+mkdir -p "$HOME/Documents/ObsidianAI/MemoriaIA"
+cp -R templates/shared-vault/. "$HOME/Documents/ObsidianAI/MemoriaIA/"
+mkdir -p "$HOME/.codex"
+cp templates/adapters/codex.md.template "$HOME/.codex/OBSIDIAN-AI-MEMORY.md"
+```
+
+Después reemplaza `{{VAULT_PATH}}` en el archivo copiado por la ruta real y añade su contenido a `~/.codex/AGENTS.md`. Para Claude, haz lo mismo con `claude.md.template` y `~/.claude/CLAUDE.md`.
+
+Windows PowerShell:
+
+```powershell
+$Vault = "$HOME\Documents\ObsidianAI\MemoriaIA"
+New-Item -ItemType Directory -Force -Path $Vault
+Copy-Item ".\templates\shared-vault\*" $Vault -Recurse
+New-Item -ItemType Directory -Force -Path "$HOME\.codex"
+Copy-Item ".\templates\adapters\codex.md.template" "$HOME\.codex\OBSIDIAN-AI-MEMORY.md"
+```
+
+La instalación manual no edita automáticamente `AGENTS.md` o `CLAUDE.md`, para evitar sobrescribir instrucciones. Copia el bloque adaptado dentro del archivo global correspondiente.
+
+## Cómo funciona la memoria
+
+1. La herramienta lee sus instrucciones globales.
+2. Consulta `00 - Inicio.md`.
+3. Abre solo las notas relacionadas con la tarea actual.
+4. Trabaja normalmente.
+5. Conserva únicamente decisiones, preferencias estables, soluciones verificadas y avances útiles a largo plazo.
+
+La conversación y la bóveda cumplen funciones diferentes: el chat mantiene el contexto inmediato; Obsidian conserva conocimiento seleccionado entre sesiones.
+
+El diseño combina índices de proyecto con notas atómicas enlazadas. No obliga a crear una nota para cada conversación: primero busca duplicados y solo conserva información útil a largo plazo.
+
+## Conectar otra IA
+
+Abre `AI-ONBOARDING.md` dentro de la bóveda. Contiene una instrucción reutilizable y explica los límites:
+
+- la IA debe poder acceder a los archivos;
+- una aplicación web sin acceso local necesita contexto manual o un conector seguro;
+- la bóveda no debe exponerse mediante un servidor público;
+- ninguna integración debe almacenar secretos en Markdown.
+
+## Actualizaciones y repetición del instalador
+
+El instalador es repetible:
+
+- actualiza sus bloques administrados;
+- conserva las demás instrucciones globales;
+- añade plantillas nuevas que no existan;
+- no reemplaza notas de la bóveda;
+- crea copias antes de integrar contenido existente.
+
+## Diagnóstico y mantenimiento
+
+El proyecto incluye un comando de mantenimiento multiplataforma:
+
+```bash
+./scripts/memoryctl.sh doctor
+./scripts/memoryctl.sh update
+./scripts/memoryctl.sh uninstall
+./scripts/memoryctl.sh migrate
+```
+
+```powershell
+.\scripts\MemoryCtl.ps1 doctor
+.\scripts\MemoryCtl.ps1 update
+.\scripts\MemoryCtl.ps1 uninstall
+.\scripts\MemoryCtl.ps1 migrate
+```
+
+`update`, `uninstall` y `migrate` son simulaciones por defecto. Solo escriben al añadir `--apply` o `-Apply`.
+
+Consulta [Mantenimiento](docs/MAINTENANCE.md), [Migración](docs/MIGRATION.md) y el [historial de cambios](CHANGELOG.md) antes de publicar o actualizar una instalación.
+
+## Adaptadores opcionales y recuperación
+
+Hay adaptadores por proyecto para Gemini CLI, Windsurf y GitHub Copilot. Son opcionales, se copian manualmente y no modifican configuraciones globales. Consulta [Adaptadores](docs/ADAPTERS.md).
+
+Las operaciones crean copias fechadas. La [guía de recuperación](docs/RECOVERY.md) explica cómo inspeccionarlas y restaurar archivos concretos de forma segura.
+
+## Versiones y paquetes
+
+La versión prevista está en [`VERSION`](VERSION). Al publicar una etiqueta `v*`, GitHub Actions genera un ZIP portátil, su suma SHA-256 y una versión de GitHub con notas automáticas.
+
+Consulta la [guía de publicación](docs/RELEASE.md) para la lista de comprobaciones, la etiqueta y la verificación de descargas.
+
+## Migración desde la primera versión
+
+La primera versión creaba las bóvedas separadas `ChatGptIA` y `ClaudeIA`. Esta versión no las elimina ni combina automáticamente. El nuevo migrador presenta primero una simulación, bloquea posibles secretos, conserva conflictos y nunca borra los originales. Consulta [la guía de migración](docs/MIGRATION.md).
 
 ## Privacidad
 
-- Revisa siempre `git status` antes de publicar cambios.
-- No copies una bóveda real dentro de este repositorio.
-- Nunca guardes contraseñas, tokens, claves API o historiales privados.
-- `.gitignore` bloquea nombres habituales de bóvedas, configuración local y secretos, pero no sustituye una revisión manual.
+- Todo se almacena localmente como Markdown.
+- No hay base de datos, telemetría ni servidor incluido.
+- No se copian conversaciones automáticamente.
+- Nunca guardes contraseñas, tokens, cookies, claves API ni credenciales.
+- Revisa `git status` y el historial antes de publicar una bóveda.
+
+## Pruebas
+
+El repositorio incluye validación de plantillas y pruebas de integración. Instalan el sistema dos veces en carpetas temporales y comprueban que conserva instrucciones y notas existentes:
+
+```powershell
+.\tests\Validate-Templates.ps1
+.\tests\Install-ObsidianAIMemory.Tests.ps1
+```
+
+```bash
+./tests/install-obsidian-ai-memory.test.sh
+```
+
+GitHub Actions ejecuta las pruebas en Windows, Ubuntu y macOS con cada cambio y cada pull request.
 
 ## Desinstalación
 
-El instalador informa de todas las rutas creadas. Antes de eliminar nada, conserva las notas que quieras guardar. Las configuraciones globales anteriores se respaldan con fecha y hora.
+Utiliza primero la simulación descrita en [Mantenimiento](docs/MAINTENANCE.md). El comando seguro retira exclusivamente los bloques administrados y conserva la bóveda.
+
+1. Conserva una copia de las notas que quieras guardar.
+2. Elimina solamente los bloques delimitados de los archivos globales de Codex y Claude Code.
+3. Elimina la carpeta de la bóveda cuando ya no la necesites.
+
+No borres archivos globales completos: pueden contener instrucciones ajenas a este proyecto.
 
 ## Licencia
 

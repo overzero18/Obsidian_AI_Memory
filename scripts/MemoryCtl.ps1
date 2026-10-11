@@ -1,0 +1,197 @@
+[CmdletBinding()]
+param(
+    [Parameter(Position = 0)]
+    [ValidateSet("doctor", "update", "uninstall", "migrate", "help")]
+    [string]$Command = "help",
+    [string]$BasePath = (Join-Path $env:USERPROFILE "Documents\ObsidianAI"),
+    [string]$VaultName = "MemoriaIA",
+    [string]$IndexFile = "00 - Inicio.md",
+    [ValidateSet("Codex", "Claude", "Generic")]
+    [string[]]$Tools = @("Codex", "Claude", "Generic"),
+    [string]$SourceRoot,
+    [string]$BackupPath,
+    [switch]$Apply,
+    [switch]$Portable
+)
+
+$ErrorActionPreference = "Stop"
+$repoRoot = Split-Path -Parent $PSScriptRoot
+if ($Portable) {
+    $BasePath = Join-Path $repoRoot "portable-data"
+    $Tools = @("Generic")
+}
+$vaultPath = Join-Path $BasePath $VaultName
+if (-not $SourceRoot) { $SourceRoot = $BasePath }
+if (-not $BackupPath) { $BackupPath = Join-Path $BasePath "backups" }
+$timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+$backupRoot = Join-Path $BasePath "backups\$timestamp"
+$managedStart = "<!-- OBSIDIAN-AI-MEMORY:START -->"
+$managedEnd = "<!-- OBSIDIAN-AI-MEMORY:END -->"
+
+function Show-Usage {
+    Write-Host @"
+Usage: .\scripts\MemoryCtl.ps1 COMMAND [options]
+
+Commands:
+  doctor      Check vault, adapters, links, possible secrets, and backups
+  update      Preview or apply updates to managed protocol files
+  uninstall   Preview or remove only managed adapter blocks
+  migrate     Preview or import legacy ChatGptIA and ClaudeIA Markdown notes
+
+Options: -BasePath, -VaultName, -IndexFile, -Tools, -SourceRoot, -BackupPath, -Portable, -Apply
+Update, uninstall, and migrate are dry runs unless -Apply is supplied.
+"@
+}
+
+function Backup-ItemSafe {
+    param([string]$Path, [string]$Label)
+    if (-not (Test-Path -LiteralPath $Path)) { return }
+    New-Item -ItemType Directory -Path $backupRoot -Force | Out-Null
+    Copy-Item -LiteralPath $Path -Destination (Join-Path $backupRoot $Label) -Recurse -Force
+    Write-Host "BACKUP $(Join-Path $backupRoot $Label)"
+}
+
+function Find-PossibleSecrets {
+    param([string]$Path)
+    $pattern = '(sk-[A-Za-z0-9_-]{16,}|gh[pousr]_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|BEGIN [A-Z ]*PRIVATE KEY|password\s*[:=]\s*\S+)'
+    return @(Get-ChildItem -LiteralPath $Path -Recurse -File -Filter "*.md" -ErrorAction SilentlyContinue |
+        Select-String -Pattern $pattern | Select-Object -ExpandProperty Path -Unique)
+}
+
+function Invoke-Doctor {
+    $errors = 0
+    $warnings = 0
+    if (-not (Test-Path -LiteralPath $vaultPath -PathType Container)) {
+        Write-Host "ERROR vault not found: $vaultPath"
+        return 1
+    }
+    Write-Host "OK vault found: $vaultPath"
+    foreach ($required in @($IndexFile, "AGENTS.md", "AI-MEMORY-PROTOCOL.md", "AI-ONBOARDING.md")) {
+        if (Test-Path -LiteralPath (Join-Path $vaultPath $required) -PathType Leaf) { Write-Host "OK required file: $required" }
+        else { Write-Host "ERROR missing required file: $required"; $errors++ }
+    }
+    $adapterPaths = @{
+        Codex = Join-Path $env:USERPROFILE ".codex\AGENTS.md"
+        Claude = Join-Path $env:USERPROFILE ".claude\CLAUDE.md"
+    }
+    foreach ($tool in @("Codex", "Claude")) {
+        if ($Tools -notcontains $tool) { continue }
+        $path = $adapterPaths[$tool]
+        if ((Test-Path -LiteralPath $path) -and (Get-Content -LiteralPath $path -Raw).Contains($vaultPath)) { Write-Host "OK $tool references the vault" }
+        else { Write-Host "WARN $tool does not reference the vault"; $warnings++ }
+    }
+
+    $notes = @(Get-ChildItem -LiteralPath $vaultPath -Recurse -File -Filter "*.md" | Where-Object {
+        $_.FullName -notmatch '[\\/]\.obsidian[\\/]' -and
+        $_.FullName -notmatch '[\\/]Plantillas[\\/]' -and
+        $_.Name -ne 'AGENTS.md'
+    })
+    $titles = @{}; foreach ($note in $notes) { $titles[$note.BaseName] = $true }
+    $linked = @{}
+    foreach ($note in $notes) {
+        $content = Get-Content -LiteralPath $note.FullName -Raw
+        foreach ($match in [regex]::Matches($content, '\[\[([^\]]+)\]\]')) {
+            $target = ($match.Groups[1].Value -split '\|')[0] -replace '#.*$', ''
+            $target = Split-Path $target -Leaf
+            if ($target) {
+                if ($target -in @("Wiki", "Nota")) { continue }
+                $linked[$target] = $true
+                if (-not $titles.ContainsKey($target)) { Write-Host "WARN broken link: [[$target]]"; $warnings++ }
+            }
+        }
+    }
+    foreach ($title in $titles.Keys) {
+        if ($title -notmatch '^00 - ' -and $title -notin @("AGENTS", "AI-MEMORY-PROTOCOL", "AI-ONBOARDING") -and -not $linked.ContainsKey($title)) {
+            Write-Host "WARN possible orphan note: $title"; $warnings++
+        }
+    }
+    $secrets = Find-PossibleSecrets $vaultPath
+    if ($secrets.Count) { Write-Host "WARN possible secrets detected in:"; $secrets | ForEach-Object { Write-Host $_ }; $warnings++ }
+    else { Write-Host "OK no common secret patterns detected" }
+    $backups = $BackupPath
+    if ((Test-Path -LiteralPath $backups) -and @(Get-ChildItem -LiteralPath $backups -Force).Count) { Write-Host "OK backups found" }
+    else { Write-Host "WARN no backups found under $backups"; $warnings++ }
+    Write-Host "SUMMARY errors=$errors warnings=$warnings"
+    if ($errors) { return 1 }; return 0
+}
+
+function Invoke-UninstallAdapters {
+    $adapterPaths = @{
+        Codex = Join-Path $env:USERPROFILE ".codex\AGENTS.md"
+        Claude = Join-Path $env:USERPROFILE ".claude\CLAUDE.md"
+    }
+    $pattern = '(?s)' + [regex]::Escape($managedStart) + '.*?' + [regex]::Escape($managedEnd) + '\s*'
+    foreach ($tool in @("Codex", "Claude")) {
+        if ($Tools -notcontains $tool) { continue }
+        $path = $adapterPaths[$tool]
+        if (-not (Test-Path -LiteralPath $path)) { Write-Host "SKIP no configuration: $path"; continue }
+        $content = Get-Content -LiteralPath $path -Raw
+        if (-not $content.Contains($managedStart)) { Write-Host "SKIP no managed $tool block: $path"; continue }
+        if (-not $content.Contains($managedEnd)) { Write-Error "Malformed managed $tool block; no changes made: $path"; continue }
+        Write-Host "REMOVE managed $tool block: $path"
+        if ($Apply) {
+            Backup-ItemSafe $path ("$($tool.ToLower())-" + (Split-Path -Leaf $path))
+            Set-Content -LiteralPath $path -Value ([regex]::Replace($content, $pattern, '').TrimEnd() + "`r`n") -Encoding utf8
+        }
+    }
+    if (-not $Apply) { Write-Host "DRY RUN: re-run with -Apply. The vault is never deleted." }
+}
+
+function Invoke-Update {
+    if (-not (Test-Path -LiteralPath $vaultPath -PathType Container)) { throw "Vault not found: $vaultPath" }
+    $managed = @("AI-MEMORY-PROTOCOL.md", "AI-ONBOARDING.md", "Plantillas\Plantilla - Nota atomica.md", "Plantillas\Plantilla - Proyecto con grafo.md")
+    foreach ($relative in $managed) {
+        $source = Join-Path $repoRoot "templates\shared-vault\$relative"
+        $destination = Join-Path $vaultPath $relative
+        $same = (Test-Path -LiteralPath $destination) -and ((Get-FileHash $source).Hash -eq (Get-FileHash $destination).Hash)
+        if ($same) { Write-Host "OK current: $relative"; continue }
+        Write-Host "UPDATE managed file: $relative"
+        if ($Apply) {
+            if (Test-Path -LiteralPath $destination) { Backup-ItemSafe $destination ("vault-" + (Split-Path -Leaf $destination)) }
+            New-Item -ItemType Directory -Path (Split-Path -Parent $destination) -Force | Out-Null
+            Copy-Item -LiteralPath $source -Destination $destination -Force
+        }
+    }
+    if ($Apply) {
+        & (Join-Path $repoRoot "scripts\Install-ObsidianAIMemory.ps1") -BasePath $BasePath -VaultName $VaultName -Tools $Tools -MergeExisting
+        if ($LASTEXITCODE) { throw "Installer update failed with exit code $LASTEXITCODE" }
+    }
+    else { Write-Host "DRY RUN: re-run with -Apply. User notes, indexes, and preferences will not be overwritten." }
+}
+
+function Invoke-LegacyMigration {
+    if (-not (Test-Path -LiteralPath $vaultPath -PathType Container)) { throw "Target vault not found: $vaultPath" }
+    $sources = @("ChatGptIA", "ClaudeIA") | ForEach-Object { Join-Path $SourceRoot $_ } | Where-Object { Test-Path -LiteralPath $_ -PathType Container }
+    if (-not $sources.Count) { throw "No legacy vaults found under $SourceRoot" }
+    $secretFiles = @($sources | ForEach-Object { Find-PossibleSecrets $_ })
+    if ($secretFiles.Count) { Write-Host "ERROR possible secrets; migration stopped before copying:"; $secretFiles | ForEach-Object { Write-Host $_ }; return }
+    if ($Apply) { Backup-ItemSafe $vaultPath "$VaultName-before-legacy-migration" }
+    foreach ($sourceVault in $sources) {
+        Get-ChildItem -LiteralPath $sourceVault -Recurse -File -Filter "*.md" | Where-Object { $_.FullName -notmatch '[\\/]\.obsidian[\\/]' } | ForEach-Object {
+            $relative = $_.FullName.Substring($sourceVault.Length).TrimStart([char[]]"\/")
+            $destination = Join-Path $vaultPath $relative
+            if (-not (Test-Path -LiteralPath $destination)) {
+                Write-Host "ADD $((Split-Path -Leaf $sourceVault))/$relative -> $relative"
+                if ($Apply) { New-Item -ItemType Directory -Path (Split-Path -Parent $destination) -Force | Out-Null; Copy-Item -LiteralPath $_.FullName -Destination $destination }
+            }
+            elseif ((Get-FileHash $_.FullName).Hash -eq (Get-FileHash $destination).Hash) { Write-Host "DUPLICATE $relative" }
+            else { Write-Host "CONFLICT $relative (not copied)" }
+        }
+    }
+    if ($Apply) { Write-Host "Migration applied. Legacy vaults were not changed or deleted." }
+    else { Write-Host "DRY RUN: re-run with -Apply. Conflicts remain untouched and legacy vaults are never deleted." }
+}
+
+try {
+    switch ($Command) {
+        doctor { if ((Invoke-Doctor) -ne 0) { throw "Doctor found blocking errors." } }
+        update { Invoke-Update }
+        uninstall { Invoke-UninstallAdapters }
+        migrate { Invoke-LegacyMigration }
+        help { Show-Usage }
+    }
+}
+catch {
+    Write-Error $_.Exception.Message
+    exit 1
+}
