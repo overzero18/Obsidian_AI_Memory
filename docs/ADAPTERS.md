@@ -6,6 +6,18 @@ Los adaptadores opcionales se copian manualmente dentro del proyecto que debe us
 2. Sustituye `{{VAULT_PATH}}` por la ruta absoluta de la bóveda.
 3. Comprueba el archivo en el control de versiones antes de compartirlo: la ruta puede revelar un nombre de usuario o una unidad local.
 
+## OpenCode
+
+OpenCode reconoce `AGENTS.md` en la raíz del proyecto. Copia
+`templates/project-adapters/opencode-AGENTS.md.template` como `AGENTS.md` **solo
+si el proyecto todavía no tiene ese archivo**.
+
+Si ya existe, no lo reemplaces: incorpora manualmente el bloque de la plantilla
+en sus instrucciones actuales y conserva las reglas del proyecto. Sustituye
+`{{VAULT_PATH}}` por la ruta absoluta de la bóveda. Este adaptador es por
+proyecto; no modifica `~/.config/opencode/AGENTS.md` ni ninguna configuración
+global. Consulta la [documentación oficial de reglas de OpenCode](https://docs.opencode.ai/docs/rules/).
+
 ## Gemini CLI
 
 Copia `templates/project-adapters/GEMINI.md.template` como `GEMINI.md` en la raíz del proyecto. Gemini CLI reconoce por defecto los archivos de contexto `GEMINI.md`. Consulta la [guía oficial](https://geminicli.com/docs/cli/gemini-md/).

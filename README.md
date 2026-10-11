@@ -19,7 +19,7 @@ No añade memoria interna a ningún modelo. Proporciona una fuente de verdad en 
 - **Windows, Linux y macOS:** el instalador funciona en los tres sistemas y la bóveda es la misma estructura Markdown local.
 - **Codex:** configuración global automática mediante `~/.codex/AGENTS.md` (o `%USERPROFILE%\.codex\AGENTS.md` en Windows).
 - **Claude Code:** configuración global automática mediante `~/.claude/CLAUDE.md` (o `%USERPROFILE%\.claude\CLAUDE.md` en Windows).
-- **Gemini CLI, Windsurf y GitHub Copilot:** adaptadores opcionales por proyecto incluidos en el repositorio; se copian manualmente y no alteran la configuración global.
+- **OpenCode, Gemini CLI, Windsurf y GitHub Copilot:** adaptadores opcionales por proyecto incluidos en el repositorio; se copian o integran manualmente y no alteran la configuración global.
 - **Cursor, Cline y otras IA:** pueden usar `AI-ONBOARDING.md` o recibir las notas relevantes manualmente hasta verificar una ruta de configuración estable.
 
 Todas comparten el mismo protocolo y la misma bóveda. El proyecto no crea ni modifica automáticamente archivos cuya ruta o formato no se hayan comprobado.
@@ -236,6 +236,8 @@ La conversación y la bóveda cumplen funciones diferentes: el chat mantiene el 
 
 El diseño combina índices de proyecto con notas atómicas enlazadas. No obliga a crear una nota para cada conversación: primero busca duplicados y solo conserva información útil a largo plazo.
 
+Para tareas largas, consulta [Memoria y contexto de trabajo](docs/MEMORY-AND-CONTEXT.md). Explica qué debe permanecer en el contexto temporal, qué puede anotarse como relevo dentro del repositorio y qué información verificada merece pasar a la bóveda.
+
 ## Conectar otra IA
 
 Abre `AI-ONBOARDING.md` dentro de la bóveda. Contiene una instrucción reutilizable y explica los límites:
@@ -281,7 +283,9 @@ Consulta [Mantenimiento](docs/MAINTENANCE.md), [Migración](docs/MIGRATION.md) y
 
 ## Adaptadores opcionales y recuperación
 
-Hay adaptadores por proyecto para Gemini CLI, Windsurf y GitHub Copilot. Son opcionales, se copian manualmente y no modifican configuraciones globales. Consulta [Adaptadores](docs/ADAPTERS.md).
+Hay adaptadores por proyecto para OpenCode, Gemini CLI, Windsurf y GitHub Copilot. Son opcionales, se copian manualmente y no modifican configuraciones globales. Consulta [Adaptadores](docs/ADAPTERS.md).
+
+Tras instalar, sigue la [verificación funcional](docs/VERIFY-INTEGRATION.md) para confirmar que una sesión nueva recupera una decisión desde la bóveda. Esta comprobación complementa a `doctor`, que revisa la instalación sin modificarla.
 
 Las operaciones crean copias fechadas. La [guía de recuperación](docs/RECOVERY.md) explica cómo inspeccionarlas y restaurar archivos concretos de forma segura.
 

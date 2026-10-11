@@ -46,7 +46,19 @@ Dentro de la bóveda, abre `Plantillas/Plantilla - Proyecto con grafo.md`, crea 
 
 Después dile a tu IA el proyecto con el que vas a trabajar. La IA debe consultar primero el índice y solo las notas relacionadas.
 
-## 5. Qué guardar y qué no
+## 5. Verifica que la memoria funciona entre sesiones
+
+Dentro de tu proyecto, registra una decisión real y confirmada en su índice; por
+ejemplo, una tecnología elegida y el motivo. Cierra o inicia una sesión nueva del
+asistente y pídele que resuma las decisiones conocidas de ese proyecto. Debe
+consultar el índice y recuperar la nota pertinente, sin cargar toda la bóveda.
+
+No uses contraseñas, datos personales ni información sensible para esta prueba.
+Si el asistente no puede acceder a los archivos locales, usa la instrucción de
+`AI-ONBOARDING.md` o comprueba el adaptador elegido. La guía completa está en
+[Verificación funcional](VERIFY-INTEGRATION.md).
+
+## 6. Qué guardar y qué no
 
 Guarda decisiones confirmadas, preferencias estables, soluciones verificadas y estado útil de los proyectos. No guardes contraseñas, tokens, cookies, claves API ni conversaciones completas.
 
@@ -55,5 +67,9 @@ Para ver un resumen sin cambios, ejecuta `obsidian-memory status`. Para ver el m
 ## Cuando necesites más
 
 - [Mantenimiento](MAINTENANCE.md): diagnóstico, actualización, migración y desconexión segura.
-- [Adaptadores](ADAPTERS.md): Gemini CLI, Windsurf y GitHub Copilot.
+- [Adaptadores](ADAPTERS.md): OpenCode, Gemini CLI, Windsurf y GitHub Copilot.
+- [Memoria y contexto de trabajo](MEMORY-AND-CONTEXT.md): límites entre sesión, relevo y bóveda duradera.
+- [Verificación funcional](VERIFY-INTEGRATION.md): comprobar la recuperación de contexto entre sesiones.
+- [Proyectos de software](SOFTWARE-PROJECTS.md): definir un MVP, criterios de aceptación, pruebas y automatización opcional.
+- [Automatizaciones](AUTOMATION.md): diseñar flujos seguros y revisables antes de conectarlos.
 - [Recuperación](RECOVERY.md): consultar y restaurar copias fechadas.

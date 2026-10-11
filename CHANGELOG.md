@@ -1,5 +1,20 @@
 # Historial de cambios
 
+## 2.6.0 - 2026-10-11
+
+### Añadido
+
+- Adaptador opcional y manual por proyecto para OpenCode, basado en `AGENTS.md` y sin modificar reglas globales ni sobrescribir instrucciones existentes.
+- Guía para separar el contexto temporal de una sesión, los relevos de tareas largas en el repositorio y la memoria duradera de la bóveda.
+- Plantillas para relevo de tarea y creación de proyectos de software, con definición de MVP, criterios de aceptación, plan de pruebas y automatización opcional.
+- Verificación funcional guiada para comprobar que un asistente recupera una decisión confirmada desde una sesión nueva.
+- Guía para diseñar automatizaciones seguras, revisables e idempotentes antes de conectarlas a servicios externos.
+
+### Seguridad
+
+- La integración de OpenCode exige conservar cualquier `AGENTS.md` ya existente y revisar las rutas locales antes de compartirlas.
+- Las automatizaciones propuestas son manuales por defecto, no incluyen credenciales y requieren definir una prueba y una reversión antes de activarse.
+
 ## 2.5.0 - 2026-10-11
 
 ### Añadido

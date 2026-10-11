@@ -12,11 +12,17 @@ $required = @(
     "docs\MAINTENANCE.md",
     "docs\MIGRATION.md",
     "docs\ADAPTERS.md",
+    "docs\AUTOMATION.md",
+    "docs\MEMORY-AND-CONTEXT.md",
+    "docs\SOFTWARE-PROJECTS.md",
+    "docs\VERIFY-INTEGRATION.md",
     "docs\RECOVERY.md",
     "docs\RELEASE.md",
     "templates\project-adapters\GEMINI.md.template",
     "templates\project-adapters\windsurf-obsidian-memory.md.template",
     "templates\project-adapters\copilot-instructions.md.template",
+    "templates\project-adapters\opencode-AGENTS.md.template",
+    "templates\project-worklog\AI-TASK-HANDOFF.md.template",
     "templates\adapters\codex.md.template",
     "templates\adapters\claude.md.template",
     "templates\shared-vault\00 - Inicio.md",
@@ -26,6 +32,7 @@ $required = @(
     "templates\shared-vault\AI-ONBOARDING.md",
     "templates\shared-vault\Proyectos\00 - Proyectos.md",
     "templates\shared-vault\Plantillas\Plantilla - Proyecto con grafo.md",
+    "templates\shared-vault\Plantillas\Plantilla - Proyecto de software.md",
     "templates\shared-vault\Plantillas\Plantilla - Nota atomica.md"
 )
 
@@ -42,6 +49,11 @@ foreach ($adapter in @("codex.md.template", "claude.md.template")) {
     if (-not $content.Contains("{{VAULT_PATH}}")) {
         throw "Adapter has no vault placeholder: $adapter"
     }
+}
+
+$opencodeAdapter = Get-Content -LiteralPath (Join-Path $repoRoot "templates\project-adapters\opencode-AGENTS.md.template") -Raw
+if (-not $opencodeAdapter.Contains("{{VAULT_PATH}}")) {
+    throw "OpenCode adapter has no vault placeholder."
 }
 
 $installer = Get-Content -LiteralPath (Join-Path $repoRoot "scripts\Install-ObsidianAIMemory.ps1") -Raw

@@ -5,6 +5,19 @@ repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 sandbox=$(mktemp -d "${TMPDIR:-/tmp}/obsidian-ai-memory-test.XXXXXX")
 trap 'rm -rf "$sandbox"' EXIT HUP INT TERM
 
+for relative in \
+    'docs/AUTOMATION.md' \
+    'docs/MEMORY-AND-CONTEXT.md' \
+    'docs/SOFTWARE-PROJECTS.md' \
+    'docs/VERIFY-INTEGRATION.md' \
+    'templates/project-adapters/opencode-AGENTS.md.template' \
+    'templates/project-worklog/AI-TASK-HANDOFF.md.template'
+do
+    [ -f "$repo_root/$relative" ] || { echo "Missing project resource: $relative" >&2; exit 1; }
+done
+
+grep -Fq '{{VAULT_PATH}}' "$repo_root/templates/project-adapters/opencode-AGENTS.md.template"
+
 export HOME="$sandbox/home"
 base_path="$sandbox/vaults"
 mkdir -p "$HOME/.codex"
@@ -25,6 +38,7 @@ for relative in \
     'AI-MEMORY-PROTOCOL.md' \
     'AI-ONBOARDING.md' \
     'Proyectos/00 - Proyectos.md' \
+    'Plantillas/Plantilla - Proyecto de software.md' \
     'Plantillas/Plantilla - Nota atomica.md'
 do
     [ -f "$vault/$relative" ] || { echo "Missing vault file: $relative" >&2; exit 1; }
