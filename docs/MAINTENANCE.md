@@ -18,6 +18,18 @@ Con la ubicación predeterminada:
 
 Nada de esta página se ejecuta de forma programada. `doctor` nunca escribe. `update`, `uninstall` y `migrate` muestran primero una simulación y solo cambian archivos al añadir la confirmación explícita.
 
+Al ejecutar el lanzador sin argumentos se abre un menú interactivo. Para un resumen breve, sin comprobaciones largas ni cambios:
+
+```bash
+~/Documents/ObsidianAI/obsidian-memory status
+```
+
+```powershell
+& "$HOME\Documents\ObsidianAI\obsidian-memory.cmd" status
+```
+
+`status` muestra la ruta de la bóveda, los adaptadores seleccionados y la última copia encontrada.
+
 ## Diagnóstico
 
 Linux y macOS, con la instalación habitual:

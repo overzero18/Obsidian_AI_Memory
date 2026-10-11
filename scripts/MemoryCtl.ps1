@@ -1,8 +1,8 @@
 [CmdletBinding()]
 param(
     [Parameter(Position = 0)]
-    [ValidateSet("doctor", "update", "uninstall", "migrate", "help")]
-    [string]$Command = "help",
+    [ValidateSet("doctor", "status", "update", "uninstall", "migrate", "menu", "help")]
+    [string]$Command = "menu",
     [string]$BasePath = (Join-Path $env:USERPROFILE "Documents\ObsidianAI"),
     [string]$VaultName = "MemoriaIA",
     [string]$IndexFile = "00 - Inicio.md",
@@ -37,6 +37,7 @@ Uso: obsidian-memory.cmd COMANDO [opciones]
 
 Comandos:
   doctor      Solo lectura. Revisa bóveda, adaptadores, enlaces, posibles secretos y copias.
+  status      Solo lectura. Muestra la ruta, adaptadores y última copia encontrada.
   update      Simula la actualización; añade -Apply para aplicarla.
   uninstall   Simula retirar solo los bloques administrados; añade -Apply para aplicarlo.
   migrate     Simula importar notas antiguas; añade -Apply para copiar sin borrar los originales.
@@ -50,6 +51,54 @@ Opciones avanzadas: -BasePath, -VaultName, -IndexFile, -Tools, -SourceRoot, -Bac
 
 Empieza por: obsidian-memory.cmd doctor
 "@
+}
+
+function Show-Status {
+    Write-Host "Estado de Obsidian AI Memory"
+    Write-Host ""
+    Write-Host "Bóveda: $vaultPath"
+    Write-Host "Bóveda disponible: $([bool](Test-Path -LiteralPath $vaultPath -PathType Container))"
+    Write-Host "Adaptadores seleccionados: $($Tools -join ', ')"
+    Write-Host "Copias: $BackupPath"
+    $lastBackup = Get-ChildItem -LiteralPath $BackupPath -Directory -ErrorAction SilentlyContinue |
+        Sort-Object Name | Select-Object -Last 1
+    if ($lastBackup) { Write-Host "Última copia encontrada: $($lastBackup.FullName)" }
+    else { Write-Host "Última copia encontrada: ninguna" }
+    Write-Host ""
+    Write-Host "Para una revisión completa sin cambios: obsidian-memory.cmd doctor"
+}
+
+function Confirm-Apply {
+    $answer = Read-Host "Esta acción puede modificar archivos y creará copias antes. Escribe APLICAR para continuar"
+    if ($answer -ne "APLICAR") { Write-Host "Acción cancelada. No se modificó ningún archivo."; return $false }
+    $script:Apply = $true
+    return $true
+}
+
+function Show-MainMenu {
+    if ([Console]::IsInputRedirected) { Show-Usage; return }
+    Write-Host @"
+
+Obsidian AI Memory
+1) Revisar instalación (doctor, solo lectura)
+2) Ver estado rápido (status, solo lectura)
+3) Ver actualización disponible (simulación)
+4) Aplicar actualización (pide confirmación)
+5) Ver migración de bóvedas antiguas (simulación)
+6) Ver desconexión de adaptadores (simulación)
+0) Salir
+"@
+    $choice = Read-Host "Elige una opción"
+    switch ($choice) {
+        "1" { if ((Invoke-Doctor) -ne 0) { Write-Host "La revisión encontró errores." } }
+        "2" { Show-Status }
+        "3" { Invoke-Update }
+        "4" { if (Confirm-Apply) { Invoke-Update } }
+        "5" { Invoke-LegacyMigration }
+        "6" { Invoke-UninstallAdapters }
+        { $_ -in @("", "0") } { Write-Host "Sin cambios." }
+        default { Write-Host "Opción no válida. No se modificó ningún archivo." }
+    }
 }
 
 function Backup-ItemSafe {
@@ -194,9 +243,11 @@ function Invoke-LegacyMigration {
 try {
     switch ($Command) {
         doctor { if ((Invoke-Doctor) -ne 0) { throw "Doctor found blocking errors." } }
+        status { Show-Status }
         update { Invoke-Update }
         uninstall { Invoke-UninstallAdapters }
         migrate { Invoke-LegacyMigration }
+        menu { Show-MainMenu }
         help { Show-Usage }
     }
 }

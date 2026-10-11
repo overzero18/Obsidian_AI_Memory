@@ -1,8 +1,12 @@
 #!/bin/sh
 set -eu
 
-command_name=${1:-help}
-[ "$#" -eq 0 ] || shift
+if [ "$#" -eq 0 ]; then
+    command_name=menu
+else
+    command_name=$1
+    shift
+fi
 base_path="${HOME}/Documents/ObsidianAI"
 vault_name="MemoriaIA"
 index_file="00 - Inicio.md"
@@ -18,6 +22,7 @@ Uso: obsidian-memory COMANDO [opciones]
 
 Comandos:
   doctor      Solo lectura. Revisa bóveda, adaptadores, enlaces, posibles secretos y copias.
+  status      Solo lectura. Muestra la ruta, adaptadores y última copia encontrada.
   update      Simula la actualización de archivos administrados; añade --apply para aplicarla.
   uninstall   Simula retirar solo los bloques administrados; añade --apply para aplicarlo.
   migrate     Simula importar notas antiguas; añade --apply para copiar sin borrar los originales.
@@ -269,11 +274,64 @@ migrate_legacy() {
     fi
 }
 
+show_status() {
+    printf 'Estado de Obsidian AI Memory\n\n'
+    printf 'Bóveda: %s\n' "$vault_path"
+    if [ -d "$vault_path" ]; then printf 'Bóveda disponible: sí\n'; else printf 'Bóveda disponible: no\n'; fi
+    printf 'Adaptadores seleccionados: %s\n' "$tools"
+    printf 'Copias: %s\n' "$backup_path"
+    last_backup=$(find "$backup_path" -mindepth 1 -maxdepth 1 -type d -print 2>/dev/null | sort | tail -n 1 || true)
+    if [ -n "$last_backup" ]; then printf 'Última copia encontrada: %s\n' "$last_backup"; else printf 'Última copia encontrada: ninguna\n'; fi
+    printf '\nPara una revisión completa sin cambios: obsidian-memory doctor\n'
+}
+
+confirm_apply() {
+    printf 'Esta acción puede modificar archivos y creará copias antes. Escribe APLICAR para continuar: '
+    IFS= read -r answer
+    if [ "$answer" != 'APLICAR' ]; then
+        echo 'Acción cancelada. No se modificó ningún archivo.'
+        return 1
+    fi
+    apply=1
+}
+
+interactive_menu() {
+    if [ ! -t 0 ]; then
+        usage
+        return
+    fi
+    cat <<'EOF'
+
+Obsidian AI Memory
+1) Revisar instalación (doctor, solo lectura)
+2) Ver estado rápido (status, solo lectura)
+3) Ver actualización disponible (simulación)
+4) Aplicar actualización (pide confirmación)
+5) Ver migración de bóvedas antiguas (simulación)
+6) Ver desconexión de adaptadores (simulación)
+0) Salir
+EOF
+    printf 'Elige una opción: '
+    IFS= read -r choice
+    case "$choice" in
+        1) doctor ;;
+        2) show_status ;;
+        3) update_managed_files ;;
+        4) confirm_apply && update_managed_files ;;
+        5) migrate_legacy ;;
+        6) uninstall_adapters ;;
+        0|'') echo 'Sin cambios.' ;;
+        *) echo 'Opción no válida. No se modificó ningún archivo.' ;;
+    esac
+}
+
 case "$command_name" in
     doctor) doctor ;;
+    status) show_status ;;
     update) update_managed_files ;;
     uninstall) uninstall_adapters ;;
     migrate) migrate_legacy ;;
+    menu) interactive_menu ;;
     help|-h|--help) usage ;;
     *) echo "Unknown command: $command_name" >&2; usage >&2; exit 2 ;;
 esac

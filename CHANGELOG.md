@@ -1,9 +1,10 @@
 # Historial de cambios
 
-## 2.2.2 - 2026-10-11
+## 2.3.0 - 2026-10-11
 
 ### Añadido
 
+- Menú interactivo seguro y comando `status` de solo lectura en los lanzadores de Windows, Linux y macOS.
 - Lanzador permanente `obsidian-memory` / `obsidian-memory.cmd` junto a cada instalación, con sus herramientas de mantenimiento incluidas.
 - Explicación visible al terminar la instalación y en el README: operaciones automáticas, manuales, de solo lectura y con confirmación explícita.
 - El lanzador Windows acepta la lista de adaptadores configurada por el instalador.

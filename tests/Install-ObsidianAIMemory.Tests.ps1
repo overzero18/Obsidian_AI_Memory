@@ -57,6 +57,8 @@ try {
     Assert-True ($LASTEXITCODE -eq 0) "The maintenance launcher failed."
     $launcherHelp = & $launcher help | Out-String
     Assert-True ($launcherHelp.Contains("doctor nunca modifica archivos")) "The maintenance help does not explain read-only doctor."
+    $launcherStatus = & $launcher status | Out-String
+    Assert-True ($launcherStatus.Contains("Estado de Obsidian AI Memory")) "The maintenance status command failed."
 
     Set-Content -LiteralPath (Join-Path $vaultPath "AI-MEMORY-PROTOCOL.md") -Value "locally modified protocol" -Encoding UTF8
     & $memoryCtl update -BasePath $basePath -VaultName "TestMemory" -Tools Codex, Claude

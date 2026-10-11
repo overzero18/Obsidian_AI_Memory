@@ -176,12 +176,16 @@ El instalador crea una carpeta visible llamada `ObsidianAI-Memory-Tools` junto a
 Ejemplos de mantenimiento en Linux/macOS:
 
 ```bash
+~/Documents/ObsidianAI/obsidian-memory
+~/Documents/ObsidianAI/obsidian-memory status
 ~/Documents/ObsidianAI/obsidian-memory doctor
 ~/Documents/ObsidianAI/obsidian-memory update
 ~/Documents/ObsidianAI/obsidian-memory update --apply
 ```
 
-En Windows, sustituye `doctor` por `update`, `uninstall` o `migrate`; usa `-Apply` únicamente después de revisar la simulación.
+Sin argumentos se abre un menú interactivo en la terminal. `status` ofrece un resumen de la ruta de la bóveda, adaptadores y última copia encontrada, sin modificar nada.
+
+En Windows, sustituye `doctor` por `status`, `update`, `uninstall` o `migrate`; usa `-Apply` únicamente después de revisar la simulación.
 
 ## Instalación manual, sin ejecutar el instalador
 
