@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500" role="img" aria-labelledby="title description">
+  <title id="title">Demostración rápida de Obsidian AI Memory</title>
+  <desc id="description">Tres pasos: instalar, abrir el menú y ejecutar doctor sin modificar nada.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#120d28"/>
+      <stop offset="1" stop-color="#071a36"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8b5cf6"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="500" rx="30" fill="url(#background)"/>
+  <text x="70" y="72" fill="#f8fafc" font-family="Arial, sans-serif" font-size="34" font-weight="700">Empieza en menos de cinco minutos</text>
+  <text x="70" y="108" fill="#b8c7e2" font-family="Arial, sans-serif" font-size="20">Instala · abre la bóveda · comprueba que todo está bien</text>
+  <path d="M390 250 H435 M765 250 H810" stroke="url(#accent)" stroke-width="6" stroke-linecap="round"/>
+  <g transform="translate(70 155)">
+    <rect width="320" height="265" rx="20" fill="#101827" stroke="#8b5cf6" stroke-width="2"/>
+    <circle cx="42" cy="42" r="21" fill="#8b5cf6"/>
+    <text x="35" y="50" fill="white" font-family="Arial, sans-serif" font-size="20" font-weight="700">1</text>
+    <text x="78" y="49" fill="#f8fafc" font-family="Arial, sans-serif" font-size="25" font-weight="700">Instala</text>
+    <rect x="25" y="82" width="270" height="120" rx="10" fill="#050a14"/>
+    <text x="44" y="120" fill="#76e4f7" font-family="monospace" font-size="16">$ sh bootstrap.sh</text>
+    <text x="44" y="154" fill="#a7f3d0" font-family="monospace" font-size="16">✓ bóveda creada</text>
+    <text x="44" y="184" fill="#a7f3d0" font-family="monospace" font-size="16">✓ copias seguras</text>
+    <text x="25" y="239" fill="#b8c7e2" font-family="Arial, sans-serif" font-size="17">No toca servicios ni nube.</text>
+  </g>
+  <g transform="translate(440 155)">
+    <rect width="320" height="265" rx="20" fill="#101827" stroke="#22d3ee" stroke-width="2"/>
+    <circle cx="42" cy="42" r="21" fill="#22d3ee"/>
+    <text x="35" y="50" fill="#071a36" font-family="Arial, sans-serif" font-size="20" font-weight="700">2</text>
+    <text x="78" y="49" fill="#f8fafc" font-family="Arial, sans-serif" font-size="25" font-weight="700">Abre el menú</text>
+    <rect x="25" y="82" width="270" height="120" rx="10" fill="#050a14"/>
+    <text x="44" y="120" fill="#76e4f7" font-family="monospace" font-size="16">$ obsidian-memory</text>
+    <text x="44" y="154" fill="#f8fafc" font-family="monospace" font-size="15">1) Revisar instalación</text>
+    <text x="44" y="184" fill="#f8fafc" font-family="monospace" font-size="15">2) Ver estado rápido</text>
+    <text x="25" y="239" fill="#b8c7e2" font-family="Arial, sans-serif" font-size="17">Todo empieza en modo seguro.</text>
+  </g>
+  <g transform="translate(810 155)">
+    <rect width="320" height="265" rx="20" fill="#101827" stroke="#34d399" stroke-width="2"/>
+    <circle cx="42" cy="42" r="21" fill="#34d399"/>
+    <text x="35" y="50" fill="#052e22" font-family="Arial, sans-serif" font-size="20" font-weight="700">3</text>
+    <text x="78" y="49" fill="#f8fafc" font-family="Arial, sans-serif" font-size="25" font-weight="700">Comprueba</text>
+    <rect x="25" y="82" width="270" height="120" rx="10" fill="#050a14"/>
+    <text x="44" y="120" fill="#76e4f7" font-family="monospace" font-size="16">$ obsidian-memory doctor</text>
+    <text x="44" y="154" fill="#a7f3d0" font-family="monospace" font-size="16">✓ bóveda correcta</text>
+    <text x="44" y="184" fill="#a7f3d0" font-family="monospace" font-size="16">✓ sin cambios</text>
+    <text x="25" y="239" fill="#b8c7e2" font-family="Arial, sans-serif" font-size="17">Doctor solo lee y revisa.</text>
+  </g>
+</svg>

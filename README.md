@@ -8,6 +8,10 @@ Sistema local y neutral para usar una única bóveda de Obsidian como memoria pe
 
 **Snoop** es la mascota del proyecto: un beagle que protege una memoria local, verificable y compartida entre asistentes.
 
+![Demostración rápida: instalar, abrir el menú y ejecutar doctor](assets/quick-demo.svg)
+
+¿Es tu primera vez? Sigue [Primeros 5 minutos](docs/FIRST-5-MINUTES.md).
+
 No añade memoria interna a ningún modelo. Proporciona una fuente de verdad en Markdown, un protocolo seguro de lectura y escritura, y adaptadores para las herramientas que admiten instrucciones locales.
 
 ## Compatibilidad

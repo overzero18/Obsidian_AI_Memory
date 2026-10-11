@@ -1,9 +1,10 @@
 # Historial de cambios
 
-## 2.4.0 - 2026-10-11
+## 2.5.0 - 2026-10-11
 
 ### Añadido
 
+- Demostración visual del flujo seguro y guía [Primeros 5 minutos](docs/FIRST-5-MINUTES.md) para nuevas instalaciones.
 - Snoop, un beagle de pelo corto como mascota y emblema original del proyecto, incluido en el README y distribuido bajo MIT.
 - Menú interactivo seguro y comando `status` de solo lectura en los lanzadores de Windows, Linux y macOS.
 - Lanzador permanente `obsidian-memory` / `obsidian-memory.cmd` junto a cada instalación, con sus herramientas de mantenimiento incluidas.
