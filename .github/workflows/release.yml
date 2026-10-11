@@ -24,4 +24,10 @@ jobs:
       - name: Publish release assets
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" obsidian-ai-memory-*.zip obsidian-ai-memory-*.zip.sha256 --generate-notes
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            "obsidian-ai-memory-${GITHUB_REF_NAME}.zip" \
+            "obsidian-ai-memory-${GITHUB_REF_NAME}.zip.sha256" \
+            obsidian-ai-memory.zip \
+            obsidian-ai-memory.zip.sha256 \
+            --generate-notes
