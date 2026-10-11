@@ -49,6 +49,7 @@ printf 'Keep this note\n' > "$vault/User note.md"
 "$repo_root/scripts/memoryctl.sh" doctor \
     --base-path "$base_path" --vault-name TestMemory --tools codex,claude
 "$base_path/obsidian-memory" doctor
+"$base_path/obsidian-memory" help | grep -Fq 'doctor nunca modifica archivos'
 
 printf 'locally modified protocol\n' > "$vault/AI-MEMORY-PROTOCOL.md"
 "$repo_root/scripts/memoryctl.sh" update \

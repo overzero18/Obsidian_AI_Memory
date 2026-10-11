@@ -14,23 +14,30 @@ portable=0
 
 usage() {
     cat <<'EOF'
-Usage: ./scripts/memoryctl.sh COMMAND [options]
+Uso: obsidian-memory COMANDO [opciones]
 
-Commands:
-  doctor      Check vault, adapters, links, possible secrets, and backups
-  update      Preview or apply updates to managed protocol files
-  uninstall   Preview or remove only managed adapter blocks
-  migrate     Preview or import legacy ChatGptIA and ClaudeIA Markdown notes
+Comandos:
+  doctor      Solo lectura. Revisa bóveda, adaptadores, enlaces, posibles secretos y copias.
+  update      Simula la actualización de archivos administrados; añade --apply para aplicarla.
+  uninstall   Simula retirar solo los bloques administrados; añade --apply para aplicarlo.
+  migrate     Simula importar notas antiguas; añade --apply para copiar sin borrar los originales.
 
-Options:
-  --base-path PATH     Parent directory (default: ~/Documents/ObsidianAI)
-  --vault-name NAME    Shared vault name (default: MemoriaIA)
-  --index-file FILE    Root index file (default: 00 - Inicio.md)
-  --tools LIST         Comma-separated: codex,claude,generic
-  --source-root PATH   Parent of legacy vaults (default: base path)
-  --backup-path PATH   Backup root to inspect (default: BASE/backups)
-  --portable           Use portable-data beside this repository without tool adapters
-  --apply              Perform update, uninstall, or migration
+Seguridad:
+  - Ningún comando se ejecuta automáticamente ni crea sincronización en la nube.
+  - doctor nunca modifica archivos.
+  - update, uninstall y migrate solo escriben al indicar --apply y crean copias antes.
+
+Opciones avanzadas:
+  --base-path RUTA     Carpeta contenedora (predeterminada: ~/Documents/ObsidianAI)
+  --vault-name NOMBRE  Nombre de la bóveda (predeterminado: MemoriaIA)
+  --index-file ARCHIVO Índice raíz (predeterminado: 00 - Inicio.md)
+  --tools LISTA        Separada por comas: codex,claude,generic
+  --source-root RUTA   Carpeta de bóvedas antiguas (predeterminada: ruta base)
+  --backup-path RUTA   Carpeta de copias a revisar (predeterminada: BASE/backups)
+  --portable           Usa portable-data junto a estas herramientas, sin adaptadores globales
+  --apply              Confirma update, uninstall o migrate
+
+Empieza por: obsidian-memory doctor
 EOF
 }
 

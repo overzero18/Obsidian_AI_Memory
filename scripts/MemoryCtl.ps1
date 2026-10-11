@@ -33,16 +33,22 @@ $managedEnd = "<!-- OBSIDIAN-AI-MEMORY:END -->"
 
 function Show-Usage {
     Write-Host @"
-Usage: .\scripts\MemoryCtl.ps1 COMMAND [options]
+Uso: obsidian-memory.cmd COMANDO [opciones]
 
-Commands:
-  doctor      Check vault, adapters, links, possible secrets, and backups
-  update      Preview or apply updates to managed protocol files
-  uninstall   Preview or remove only managed adapter blocks
-  migrate     Preview or import legacy ChatGptIA and ClaudeIA Markdown notes
+Comandos:
+  doctor      Solo lectura. Revisa bóveda, adaptadores, enlaces, posibles secretos y copias.
+  update      Simula la actualización; añade -Apply para aplicarla.
+  uninstall   Simula retirar solo los bloques administrados; añade -Apply para aplicarlo.
+  migrate     Simula importar notas antiguas; añade -Apply para copiar sin borrar los originales.
 
-Options: -BasePath, -VaultName, -IndexFile, -Tools, -SourceRoot, -BackupPath, -Portable, -Apply
-Update, uninstall, and migrate are dry runs unless -Apply is supplied.
+Seguridad:
+  - Ningún comando se ejecuta automáticamente ni crea sincronización en la nube.
+  - doctor nunca modifica archivos.
+  - update, uninstall y migrate solo escriben al indicar -Apply y crean copias antes.
+
+Opciones avanzadas: -BasePath, -VaultName, -IndexFile, -Tools, -SourceRoot, -BackupPath, -Portable, -Apply
+
+Empieza por: obsidian-memory.cmd doctor
 "@
 }
 
