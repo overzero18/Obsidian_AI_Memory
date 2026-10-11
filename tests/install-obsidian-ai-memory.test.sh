@@ -16,6 +16,8 @@ printf '# Existing Codex instructions\n' > "$HOME/.codex/AGENTS.md"
     --tools codex,claude,generic
 
 vault="$base_path/TestMemory"
+[ -x "$base_path/obsidian-memory" ] || { echo "Missing maintenance launcher" >&2; exit 1; }
+[ -f "$base_path/ObsidianAI-Memory-Tools/scripts/memoryctl.sh" ] || { echo "Missing maintenance tools" >&2; exit 1; }
 for relative in \
     '00 - Inicio.md' \
     '00 - Preferencias.md' \
@@ -46,6 +48,7 @@ printf 'Keep this note\n' > "$vault/User note.md"
 
 "$repo_root/scripts/memoryctl.sh" doctor \
     --base-path "$base_path" --vault-name TestMemory --tools codex,claude
+"$base_path/obsidian-memory" doctor
 
 printf 'locally modified protocol\n' > "$vault/AI-MEMORY-PROTOCOL.md"
 "$repo_root/scripts/memoryctl.sh" update \

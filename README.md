@@ -149,6 +149,40 @@ Por seguridad, el instalador se detiene si la carpeta de destino contiene archiv
 
 `-MergeExisting` y `--merge-existing` nunca reemplazan notas existentes dentro de la bóveda.
 
+## Después de instalar: qué se hace solo y qué decides tú
+
+Al finalizar, el instalador muestra la ruta exacta de un comando de mantenimiento. En la ubicación predeterminada puedes usar:
+
+```bash
+~/Documents/ObsidianAI/obsidian-memory doctor
+```
+
+```powershell
+& "$HOME\Documents\ObsidianAI\obsidian-memory.cmd" doctor
+```
+
+El instalador crea una carpeta visible llamada `ObsidianAI-Memory-Tools` junto a la bóveda. Contiene las herramientas necesarias, por lo que estos comandos siguen funcionando aunque se borre la carpeta desde la que instalaste o se utilizó la descarga sencilla.
+
+| Acción | ¿Se hace automáticamente? | Qué hace |
+| --- | --- | --- |
+| Crear la bóveda y los adaptadores elegidos | Sí, durante la instalación | Añade archivos que faltan y conserva notas existentes. |
+| Crear copias fechadas | Sí, antes de modificar archivos existentes | Permite recuperar configuraciones o archivos administrados. |
+| `doctor` | No, lo ejecutas tú | Revisa archivos, adaptadores, enlaces, posibles secretos y copias; nunca modifica nada. |
+| `update` | No, lo ejecutas tú | Muestra qué archivos administrados se actualizarían; requiere `--apply` o `-Apply` para escribir. |
+| `uninstall` | No, lo ejecutas tú | Muestra los bloques gestionados que retiraría; conserva la bóveda y requiere confirmación explícita. |
+| `migrate` | No, lo ejecutas tú | Muestra notas antiguas que podría importar; no borra las bóvedas originales y requiere confirmación explícita. |
+| Copias programadas o nube | No | El proyecto no crea tareas programadas ni sincroniza datos sin que lo configures. |
+
+Ejemplos de mantenimiento en Linux/macOS:
+
+```bash
+~/Documents/ObsidianAI/obsidian-memory doctor
+~/Documents/ObsidianAI/obsidian-memory update
+~/Documents/ObsidianAI/obsidian-memory update --apply
+```
+
+En Windows, sustituye `doctor` por `update`, `uninstall` o `migrate`; usa `-Apply` únicamente después de revisar la simulación.
+
 ## Instalación manual, sin ejecutar el instalador
 
 También puede configurarse únicamente con comandos. Sustituye la ruta por la ubicación deseada.
@@ -226,6 +260,8 @@ El proyecto incluye un comando de mantenimiento multiplataforma:
 ```
 
 `update`, `uninstall` y `migrate` son simulaciones por defecto. Solo escriben al añadir `--apply` o `-Apply`.
+
+Si instalaste con el asistente sencillo, usa preferentemente el comando `obsidian-memory` creado junto a la bóveda. Los comandos dentro de `scripts/` siguen siendo útiles para quien conserva un clon o el ZIP extraído.
 
 Consulta [Mantenimiento](docs/MAINTENANCE.md), [Migración](docs/MIGRATION.md) y el [historial de cambios](CHANGELOG.md) antes de publicar o actualizar una instalación.
 

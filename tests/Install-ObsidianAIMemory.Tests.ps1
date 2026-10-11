@@ -21,6 +21,9 @@ try {
     & $installer -BasePath $basePath -VaultName "TestMemory" -Tools Codex, Claude, Generic
 
     $vaultPath = Join-Path $basePath "TestMemory"
+    $launcher = Join-Path $basePath "obsidian-memory.cmd"
+    Assert-True (Test-Path -LiteralPath $launcher) "Missing maintenance launcher."
+    Assert-True (Test-Path -LiteralPath (Join-Path $basePath "ObsidianAI-Memory-Tools\scripts\MemoryCtl.ps1")) "Missing maintenance tools."
     foreach ($relativePath in @(
         "00 - Inicio.md",
         "00 - Preferencias.md",
@@ -50,6 +53,8 @@ try {
 
     $memoryCtl = Join-Path $repositoryRoot "scripts\MemoryCtl.ps1"
     & $memoryCtl doctor -BasePath $basePath -VaultName "TestMemory" -Tools Codex, Claude
+    & $launcher doctor
+    Assert-True ($LASTEXITCODE -eq 0) "The maintenance launcher failed."
 
     Set-Content -LiteralPath (Join-Path $vaultPath "AI-MEMORY-PROTOCOL.md") -Value "locally modified protocol" -Encoding UTF8
     & $memoryCtl update -BasePath $basePath -VaultName "TestMemory" -Tools Codex, Claude

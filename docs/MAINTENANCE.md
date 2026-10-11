@@ -2,19 +2,37 @@
 
 `memoryctl` reúne las operaciones de diagnóstico, actualización, desconexión y migración. Los comandos que pueden escribir funcionan en modo simulación salvo que se indique explícitamente `--apply` en Linux/macOS o `-Apply` en Windows.
 
-## Diagnóstico
+## Antes de empezar
 
-Linux y macOS:
+La instalación crea una carpeta `ObsidianAI-Memory-Tools` y un lanzador junto a la bóveda. Es la forma recomendada de mantener una instalación que se hizo desde la descarga sencilla: no necesitas conservar el clon ni el ZIP original.
+
+Con la ubicación predeterminada:
 
 ```bash
-./scripts/memoryctl.sh doctor
+~/Documents/ObsidianAI/obsidian-memory doctor
 ```
-
-Windows PowerShell:
 
 ```powershell
-.\scripts\MemoryCtl.ps1 doctor
+& "$HOME\Documents\ObsidianAI\obsidian-memory.cmd" doctor
 ```
+
+Nada de esta página se ejecuta de forma programada. `doctor` nunca escribe. `update`, `uninstall` y `migrate` muestran primero una simulación y solo cambian archivos al añadir la confirmación explícita.
+
+## Diagnóstico
+
+Linux y macOS, con la instalación habitual:
+
+```bash
+~/Documents/ObsidianAI/obsidian-memory doctor
+```
+
+Windows PowerShell, con la instalación habitual:
+
+```powershell
+& "$HOME\Documents\ObsidianAI\obsidian-memory.cmd" doctor
+```
+
+También puedes usar `./scripts/memoryctl.sh` o `.\scripts\MemoryCtl.ps1` desde un clon o ZIP conservado.
 
 El diagnóstico comprueba:
 
@@ -33,21 +51,21 @@ La detección de secretos es preventiva y puede producir falsos positivos o no r
 Primero muestra los cambios:
 
 ```bash
-./scripts/memoryctl.sh update
+~/Documents/ObsidianAI/obsidian-memory update
 ```
 
 ```powershell
-.\scripts\MemoryCtl.ps1 update
+& "$HOME\Documents\ObsidianAI\obsidian-memory.cmd" update
 ```
 
 Para aplicarlos:
 
 ```bash
-./scripts/memoryctl.sh update --apply
+~/Documents/ObsidianAI/obsidian-memory update --apply
 ```
 
 ```powershell
-.\scripts\MemoryCtl.ps1 update -Apply
+& "$HOME\Documents\ObsidianAI\obsidian-memory.cmd" update -Apply
 ```
 
 La actualización:
@@ -65,21 +83,21 @@ Los archivos administrados pueden personalizarse, pero una actualización aplica
 Simulación:
 
 ```bash
-./scripts/memoryctl.sh uninstall
+~/Documents/ObsidianAI/obsidian-memory uninstall
 ```
 
 ```powershell
-.\scripts\MemoryCtl.ps1 uninstall
+& "$HOME\Documents\ObsidianAI\obsidian-memory.cmd" uninstall
 ```
 
 Aplicación:
 
 ```bash
-./scripts/memoryctl.sh uninstall --apply
+~/Documents/ObsidianAI/obsidian-memory uninstall --apply
 ```
 
 ```powershell
-.\scripts\MemoryCtl.ps1 uninstall -Apply
+& "$HOME\Documents\ObsidianAI\obsidian-memory.cmd" uninstall -Apply
 ```
 
 Solo se eliminan los bloques comprendidos entre `OBSIDIAN-AI-MEMORY:START` y `OBSIDIAN-AI-MEMORY:END`. Antes se respaldan los archivos globales. La bóveda y las demás instrucciones nunca se eliminan.

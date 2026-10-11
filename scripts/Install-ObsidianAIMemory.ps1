@@ -87,6 +87,20 @@ function Install-ManagedBlock {
     Write-Host "Configured: $Destination" -ForegroundColor Green
 }
 
+function Install-MaintenanceTools {
+    $toolsRoot = Join-Path $BasePath "ObsidianAI-Memory-Tools"
+    $launcher = Join-Path $BasePath "obsidian-memory.cmd"
+    if (Test-Path -LiteralPath $toolsRoot) { Backup-Path -Path $toolsRoot -Label "ObsidianAI-Memory-Tools" }
+    New-Item -ItemType Directory -Path $toolsRoot -Force | Out-Null
+    foreach ($managedDirectory in @("scripts", "templates")) {
+        Copy-Item -LiteralPath (Join-Path $repoRoot $managedDirectory) -Destination $toolsRoot -Recurse -Force
+    }
+    if (Test-Path -LiteralPath $launcher) { Backup-Path -Path $launcher -Label "obsidian-memory.cmd" }
+    $toolsArgument = $Tools -join ','
+    $launcherContent = "@echo off`r`npowershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$toolsRoot\scripts\MemoryCtl.ps1`" %* -BasePath `"$BasePath`" -VaultName `"$VaultName`" -Tools $toolsArgument`r`n"
+    Set-Content -LiteralPath $launcher -Value $launcherContent -Encoding ascii
+}
+
 try {
     if ((Test-DirectoryHasContent -Path $vaultPath) -and -not $MergeExisting) {
         throw "'$vaultPath' already contains files. Re-run with -MergeExisting to preserve its files and add only missing templates."
@@ -100,6 +114,7 @@ try {
     Copy-TemplateTreeMissing `
         -Source (Join-Path $repoRoot "templates\shared-vault") `
         -Destination $vaultPath
+    Install-MaintenanceTools
 
     if ($Tools -contains "Codex") {
         Install-ManagedBlock `
@@ -120,6 +135,11 @@ try {
     if ($Portable) { Write-Host "Portable mode: no global AI configuration was modified." }
     Write-Host "Open the vault in Obsidian. Restart configured AI tools so they reload their instructions."
     Write-Host "For any other AI, use: $(Join-Path $vaultPath 'AI-ONBOARDING.md')"
+    Write-Host ""
+    Write-Host "Maintenance command: $(Join-Path $BasePath 'obsidian-memory.cmd') doctor"
+    Write-Host "It checks the installation only; it does not change files."
+    Write-Host "Update, uninstall, and migrate are manual and start as a preview. Add -Apply only after reviewing it."
+    Write-Host "No scheduled task or automatic cloud backup was created."
 }
 catch {
     Write-Error $_.Exception.Message

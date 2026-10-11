@@ -105,6 +105,32 @@ copy_missing_templates() {
     done
 }
 
+install_maintenance_tools() {
+    tools_root="$base_path/ObsidianAI-Memory-Tools"
+    launcher="$base_path/obsidian-memory"
+
+    if [ -d "$tools_root" ]; then
+        backup_path "$tools_root" "ObsidianAI-Memory-Tools"
+    fi
+    mkdir -p "$tools_root"
+    for managed_directory in scripts templates; do
+        find "$repo_root/$managed_directory" -type f -print | while IFS= read -r source_file; do
+            relative_path=${source_file#"$repo_root/"}
+            target_file="$tools_root/$relative_path"
+            mkdir -p "$(dirname "$target_file")"
+            cp "$source_file" "$target_file"
+        done
+    done
+
+    if [ -f "$launcher" ]; then backup_path "$launcher" "obsidian-memory"; fi
+    {
+        printf '%s\n' '#!/bin/sh'
+        printf 'exec sh "%s/scripts/memoryctl.sh" "$@" --base-path "%s" --vault-name "%s" --tools "%s"\n' \
+            "$tools_root" "$base_path" "$vault_name" "$tools"
+    } > "$launcher"
+    chmod +x "$launcher"
+}
+
 install_managed_block() {
     template=$1
     destination=$2
@@ -157,6 +183,7 @@ fi
 
 mkdir -p "$vault_path"
 copy_missing_templates "$repo_root/templates/shared-vault" "$vault_path"
+install_maintenance_tools
 
 case ",$tools," in
     *,codex,*)
@@ -175,3 +202,7 @@ printf 'Enabled adapters: %s\n' "$tools"
 if [ "$portable" -eq 1 ]; then printf 'Portable mode: no global AI configuration was modified.\n'; fi
 printf 'Open the vault in Obsidian and restart configured AI tools.\n'
 printf 'For any other AI, use: %s/AI-ONBOARDING.md\n' "$vault_path"
+printf '\nMaintenance command: %s doctor\n' "$base_path/obsidian-memory"
+printf 'It checks the installation only; it does not change files.\n'
+printf 'Update, uninstall, and migrate are manual and start as a preview. Add --apply only after reviewing it.\n'
+printf 'No scheduled task or automatic cloud backup was created.\n'
