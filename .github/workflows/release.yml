@@ -18,6 +18,8 @@ jobs:
         run: |
           git archive --format=zip --output="obsidian-ai-memory-${GITHUB_REF_NAME}.zip" HEAD
           sha256sum "obsidian-ai-memory-${GITHUB_REF_NAME}.zip" > "obsidian-ai-memory-${GITHUB_REF_NAME}.zip.sha256"
+          cp "obsidian-ai-memory-${GITHUB_REF_NAME}.zip" obsidian-ai-memory.zip
+          sha256sum obsidian-ai-memory.zip > obsidian-ai-memory.zip.sha256
 
       - name: Publish release assets
         env:

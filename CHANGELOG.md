@@ -1,9 +1,10 @@
 # Historial de cambios
 
-## Sin publicar
+## 2.1.0 - 2026-10-11
 
 ### Añadido
 
+- `bootstrap.sh` para Linux y macOS: descarga el último paquete publicado, verifica SHA-256 y ejecuta el instalador normal sin requerir Git.
 - Bóveda única y neutral para Codex, Claude y asistentes compatibles con Markdown local.
 - Instalación segura en Windows, Linux y macOS.
 - Protocolo de memoria, incorporación genérica y plantillas de notas atómicas.
@@ -20,6 +21,8 @@
 
 ### Cambiado
 
+- La compatibilidad distingue claramente los adaptadores automáticos, los manuales y las herramientas que usan la incorporación genérica.
+- El paquete de cada versión también publica nombres de descarga estables para la instalación sencilla en Linux y macOS.
 - Las configuraciones globales ya no se reemplazan: se administran mediante bloques delimitados.
 - Las actualizaciones de una bóveda existente conservan sus notas, índices y preferencias.
 - La documentación y el nombre visible del producto pasan de Windows a multiplataforma.

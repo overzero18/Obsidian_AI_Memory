@@ -15,6 +15,7 @@
 
 2. Revisa `git status`, `git diff --check` y el historial antes de publicar.
 3. Confirma que no hay rutas personales, bóvedas, secretos ni `portable-data/` en los cambios.
+4. Comprueba que la publicación incluye los paquetes versionados y los nombres estables `obsidian-ai-memory.zip` y `obsidian-ai-memory.zip.sha256`, usados por `bootstrap.sh`.
 4. Actualiza `VERSION` y `CHANGELOG.md`.
 5. Haz commit de todos los archivos de la versión.
 

@@ -6,11 +6,13 @@ No añade memoria interna a ningún modelo. Proporciona una fuente de verdad en 
 
 ## Compatibilidad
 
-- **Codex:** configuración automática mediante `~/.codex/AGENTS.md` (o `%USERPROFILE%\.codex\AGENTS.md` en Windows).
-- **Claude Code:** configuración automática mediante `~/.claude/CLAUDE.md` (o `%USERPROFILE%\.claude\CLAUDE.md` en Windows).
-- **Otras IA:** utiliza `AI-ONBOARDING.md` cuando la herramienta pueda leer archivos locales, o proporciona manualmente las notas relevantes.
+- **Windows, Linux y macOS:** el instalador funciona en los tres sistemas y la bóveda es la misma estructura Markdown local.
+- **Codex:** configuración global automática mediante `~/.codex/AGENTS.md` (o `%USERPROFILE%\.codex\AGENTS.md` en Windows).
+- **Claude Code:** configuración global automática mediante `~/.claude/CLAUDE.md` (o `%USERPROFILE%\.claude\CLAUDE.md` en Windows).
+- **Gemini CLI, Windsurf y GitHub Copilot:** adaptadores opcionales por proyecto incluidos en el repositorio; se copian manualmente y no alteran la configuración global.
+- **Cursor, Cline y otras IA:** pueden usar `AI-ONBOARDING.md` o recibir las notas relevantes manualmente hasta verificar una ruta de configuración estable.
 
-Gemini CLI, Cursor, Windsurf, Cline, Copilot y herramientas futuras pueden utilizar la misma bóveda. Sus archivos de configuración no se modifican automáticamente porque cambian entre productos y versiones; el protocolo universal evita depender de rutas no verificadas.
+Todas comparten el mismo protocolo y la misma bóveda. El proyecto no crea ni modifica automáticamente archivos cuya ruta o formato no se hayan comprobado.
 
 ## Qué instala
 
@@ -35,7 +37,7 @@ Antes de modificar un archivo existente crea una copia fechada.
 
 ### Windows
 
-1. Descarga o clona este repositorio.
+1. Descarga el ZIP de la [última versión publicada](https://github.com/overzero18/obsidian-ai-memory-windows/releases/latest) y extráelo.
 2. Haz doble clic en `INSTALL.cmd`.
 3. Abre `%USERPROFILE%\Documents\ObsidianAI\MemoriaIA` como bóveda en Obsidian.
 4. Reinicia las herramientas configuradas.
@@ -47,6 +49,15 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Install-Obsidi
 ```
 
 ### Linux y macOS
+
+La forma más sencilla, sin clonar el repositorio, es descargar el pequeño iniciador y ejecutarlo. Descarga el paquete publicado, verifica su SHA-256 y abre el instalador:
+
+```bash
+curl -fsSLO https://raw.githubusercontent.com/overzero18/obsidian-ai-memory-windows/main/bootstrap.sh
+sh bootstrap.sh
+```
+
+También puedes clonar el repositorio si prefieres conservar una copia local:
 
 ```bash
 git clone https://github.com/overzero18/obsidian-ai-memory-windows.git
@@ -61,6 +72,8 @@ sh ./INSTALL.sh
 ```
 
 La ubicación predeterminada es `~/Documents/ObsidianAI/MemoriaIA`.
+
+Si falta una herramienta para la descarga, instala `curl` y `unzip` con el gestor de paquetes de tu distribución y repite los dos comandos. El instalador no solicita privilegios de administrador ni modifica paquetes del sistema.
 
 ### Modo portátil
 
@@ -216,7 +229,7 @@ Las operaciones crean copias fechadas. La [guía de recuperación](docs/RECOVERY
 
 ## Versiones y paquetes
 
-La versión prevista está en [`VERSION`](VERSION). Al publicar una etiqueta `v*`, GitHub Actions genera un ZIP portátil, su suma SHA-256 y una versión de GitHub con notas automáticas.
+La versión actual está en [`VERSION`](VERSION). Al publicar una etiqueta `v*`, GitHub Actions genera un ZIP portátil, su suma SHA-256 y una versión de GitHub con notas automáticas. La descarga sencilla para Linux y macOS usa siempre el último paquete publicado y comprueba su SHA-256 antes de instalar.
 
 Consulta la [guía de publicación](docs/RELEASE.md) para la lista de comprobaciones, la etiqueta y la verificación de descargas.
 

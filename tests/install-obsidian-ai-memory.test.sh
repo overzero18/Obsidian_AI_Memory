@@ -83,7 +83,7 @@ portable_repo="$sandbox/portable-repository"
 cp -R "$repo_root" "$portable_repo"
 portable_home="$sandbox/portable-home"
 mkdir -p "$portable_home"
-HOME="$portable_home" "$portable_repo/INSTALL.sh" --portable
+HOME="$portable_home" sh "$portable_repo/INSTALL.sh" --portable
 [ -f "$portable_repo/portable-data/MemoriaIA/00 - Inicio.md" ]
 [ ! -e "$portable_home/.codex/AGENTS.md" ]
 HOME="$portable_home" "$portable_repo/scripts/memoryctl.sh" doctor --portable
