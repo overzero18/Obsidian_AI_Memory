@@ -6,7 +6,6 @@ param(
     [string]$BasePath = (Join-Path $env:USERPROFILE "Documents\ObsidianAI"),
     [string]$VaultName = "MemoriaIA",
     [string]$IndexFile = "00 - Inicio.md",
-    [ValidateSet("Codex", "Claude", "Generic")]
     [string[]]$Tools = @("Codex", "Claude", "Generic"),
     [string]$SourceRoot,
     [string]$BackupPath,
@@ -15,6 +14,10 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$validTools = @("Codex", "Claude", "Generic")
+$Tools = @($Tools | ForEach-Object { $_ -split ',' } | Where-Object { $_ })
+$invalidTools = @($Tools | Where-Object { $_ -notin $validTools })
+if ($invalidTools.Count) { throw "-Tools only accepts: $($validTools -join ', ')" }
 $repoRoot = Split-Path -Parent $PSScriptRoot
 if ($Portable) {
     $BasePath = Join-Path $repoRoot "portable-data"

@@ -1,11 +1,12 @@
 # Historial de cambios
 
-## 2.2.0 - 2026-10-11
+## 2.2.1 - 2026-10-11
 
 ### Añadido
 
 - Lanzador permanente `obsidian-memory` / `obsidian-memory.cmd` junto a cada instalación, con sus herramientas de mantenimiento incluidas.
 - Explicación visible al terminar la instalación y en el README: operaciones automáticas, manuales, de solo lectura y con confirmación explícita.
+- El lanzador Windows acepta la lista de adaptadores configurada por el instalador.
 - `bootstrap.sh` para Linux y macOS: descarga el último paquete publicado, verifica SHA-256 y ejecuta el instalador normal sin requerir Git.
 - El modo portátil iniciado desde `bootstrap.sh` conserva su carpeta en el directorio actual, en vez de usar una ubicación temporal.
 - La publicación incluye de forma comprobable los nombres estables que usa el iniciador, además de los archivos versionados.
