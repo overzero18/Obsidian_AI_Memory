@@ -1,6 +1,12 @@
 # Obsidian AI Memory
 
+<p align="center">
+  <img src="assets/snoop-memory-guardian.png" alt="Snoop, beagle guardián de la memoria" width="280">
+</p>
+
 Sistema local y neutral para usar una única bóveda de Obsidian como memoria persistente compartida entre asistentes de IA en Windows, Linux y macOS.
+
+**Snoop** es la mascota del proyecto: un beagle que protege una memoria local, verificable y compartida entre asistentes.
 
 No añade memoria interna a ningún modelo. Proporciona una fuente de verdad en Markdown, un protocolo seguro de lectura y escritura, y adaptadores para las herramientas que admiten instrucciones locales.
 
