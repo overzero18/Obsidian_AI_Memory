@@ -1,5 +1,16 @@
 # Historial de cambios
 
+## 2.6.1 - 2026-10-11
+
+### Seguridad
+
+- Los instaladores de Windows, Linux y macOS validan los marcadores de los bloques administrados antes de realizar cualquier cambio. Si falta uno, abortan sin crear la bóveda ni modificar configuraciones.
+- Añadido modelo de límites de confianza y permisos, incluida la advertencia ante instrucciones no confiables dentro de notas Markdown.
+
+### Pruebas
+
+- Añadidas pruebas de regresión para configuraciones con bloques administrados incompletos.
+
 ## 2.6.0 - 2026-10-11
 
 ### Añadido

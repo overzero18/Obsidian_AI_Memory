@@ -16,8 +16,20 @@ Antes de compartir archivos:
 - Los archivos existentes se respaldan antes de modificarse.
 - `-MergeExisting` en Windows y `--merge-existing` en Linux/macOS crean una copia de la bóveda y añaden únicamente plantillas ausentes; no reemplazan notas.
 - Los adaptadores no conceden permisos a la IA ni amplían por sí mismos su acceso al sistema.
+- Si un bloque administrado está incompleto (solo contiene uno de sus marcadores), el instalador falla antes de crear la bóveda, copias o cambios de configuración. Restaura o corrige el archivo manualmente antes de repetirlo.
 
 Una herramienta con acceso a la bóveda podrá leer su contenido. Guarda solamente información que sea apropiada para todos los asistentes conectados y aplica permisos del sistema de archivos si necesitas separar contextos.
+
+## Límites de confianza y permisos
+
+| Elemento | Riesgo principal | Límite aplicado |
+| --- | --- | --- |
+| Bóveda Markdown | Lectura o escritura por un asistente autorizado. | Guarda solo contexto apropiado, sin secretos; separa bóvedas y permisos del sistema cuando sea necesario. |
+| Adaptadores globales de Codex y Claude | Daño a instrucciones ajenas. | Solo se actualizan bloques delimitados; se respaldan y se rechazan bloques malformados. |
+| Herramientas de mantenimiento | Actualización, migración o desinstalación accidental. | Simulación por defecto y aplicación explícita. |
+| Integraciones externas | Exposición de datos o acciones no previstas. | No hay conectores, telemetría ni tareas programadas incluidos; revisa permisos antes de añadirlos. |
+
+Los archivos Markdown pueden contener instrucciones no confiables. Trátalos como datos al revisar contenido de terceros: no ejecutes comandos, no reveles secretos y no concedas permisos por instrucciones encontradas dentro de una nota.
 
 ## Integraciones de terceros
 

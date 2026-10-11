@@ -23,6 +23,20 @@ base_path="$sandbox/vaults"
 mkdir -p "$HOME/.codex"
 printf '# Existing Codex instructions\n' > "$HOME/.codex/AGENTS.md"
 
+malformed_home="$sandbox/malformed-home"
+malformed_base="$sandbox/malformed-vaults"
+mkdir -p "$malformed_home/.codex"
+printf '%s\n' '<!-- OBSIDIAN-AI-MEMORY:START -->' > "$malformed_home/.codex/AGENTS.md"
+if HOME="$malformed_home" "$repo_root/scripts/install-obsidian-ai-memory.sh" \
+    --base-path "$malformed_base" --vault-name MalformedMemory --tools codex > "$sandbox/malformed-output.txt" 2>&1
+then
+    echo 'Installer accepted a malformed managed block.' >&2
+    exit 1
+fi
+grep -Fq 'Malformed managed block; no changes made' "$sandbox/malformed-output.txt"
+[ ! -e "$malformed_base/MalformedMemory" ] || { echo 'Malformed configuration created a vault.' >&2; exit 1; }
+[ "$(cat "$malformed_home/.codex/AGENTS.md")" = '<!-- OBSIDIAN-AI-MEMORY:START -->' ] || { echo 'Malformed configuration was changed.' >&2; exit 1; }
+
 "$repo_root/scripts/install-obsidian-ai-memory.sh" \
     --base-path "$base_path" \
     --vault-name TestMemory \

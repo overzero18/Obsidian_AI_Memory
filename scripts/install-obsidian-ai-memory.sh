@@ -90,6 +90,20 @@ backup_path() {
     printf 'Backup created: %s\n' "$backup_root/$label"
 }
 
+validate_managed_block() {
+    destination=$1
+    [ -f "$destination" ] || return 0
+
+    has_start=0
+    has_end=0
+    grep -Fq "$managed_start" "$destination" && has_start=1
+    grep -Fq "$managed_end" "$destination" && has_end=1
+    if [ "$has_start" -ne "$has_end" ]; then
+        echo "Malformed managed block; no changes made: $destination" >&2
+        return 1
+    fi
+}
+
 copy_missing_templates() {
     source_root=$1
     destination_root=$2
@@ -149,6 +163,7 @@ install_managed_block() {
 
     mkdir -p "$(dirname "$destination")"
     if [ -f "$destination" ]; then
+        validate_managed_block "$destination"
         backup_path "$destination" "$label"
         if grep -Fq "$managed_start" "$destination" && grep -Fq "$managed_end" "$destination"; then
             awk -v start="$managed_start" -v end="$managed_end" -v block="$wrapped" '
@@ -171,6 +186,13 @@ install_managed_block() {
     mv "$updated" "$destination"
     printf 'Configured: %s\n' "$destination"
 }
+
+case ",$tools," in
+    *,codex,*) validate_managed_block "$HOME/.codex/AGENTS.md" ;;
+esac
+case ",$tools," in
+    *,claude,*) validate_managed_block "$HOME/.claude/CLAUDE.md" ;;
+esac
 
 if directory_has_content "$vault_path" && [ "$merge_existing" -ne 1 ]; then
     echo "'$vault_path' already contains files. Re-run with --merge-existing to preserve its files and add only missing templates." >&2

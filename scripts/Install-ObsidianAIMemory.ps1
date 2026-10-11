@@ -41,6 +41,18 @@ function Backup-Path {
     Write-Host "Backup created: $backup" -ForegroundColor Yellow
 }
 
+function Test-ManagedBlockIntegrity {
+    param([string]$Destination)
+    if (-not (Test-Path -LiteralPath $Destination)) { return }
+
+    $content = Get-Content -LiteralPath $Destination -Raw
+    $hasStart = $content.Contains($managedStart)
+    $hasEnd = $content.Contains($managedEnd)
+    if ($hasStart -ne $hasEnd) {
+        throw "Malformed managed block; no changes made: $Destination"
+    }
+}
+
 function Copy-TemplateTreeMissing {
     param([string]$Source, [string]$Destination)
 
@@ -69,6 +81,7 @@ function Install-ManagedBlock {
     $existing = ""
 
     if (Test-Path -LiteralPath $Destination) {
+        Test-ManagedBlockIntegrity -Destination $Destination
         Backup-Path -Path $Destination -Label ((Split-Path -Leaf $parent) + "-" + (Split-Path -Leaf $Destination))
         $existing = Get-Content -LiteralPath $Destination -Raw
         $pattern = "(?s)" + [regex]::Escape($managedStart) + ".*?" + [regex]::Escape($managedEnd)
@@ -102,6 +115,13 @@ function Install-MaintenanceTools {
 }
 
 try {
+    if ($Tools -contains "Codex") {
+        Test-ManagedBlockIntegrity -Destination (Join-Path $env:USERPROFILE ".codex\AGENTS.md")
+    }
+    if ($Tools -contains "Claude") {
+        Test-ManagedBlockIntegrity -Destination (Join-Path $env:USERPROFILE ".claude\CLAUDE.md")
+    }
+
     if ((Test-DirectoryHasContent -Path $vaultPath) -and -not $MergeExisting) {
         throw "'$vaultPath' already contains files. Re-run with -MergeExisting to preserve its files and add only missing templates."
     }

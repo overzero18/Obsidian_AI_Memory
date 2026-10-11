@@ -18,6 +18,20 @@ try {
     Set-Content -LiteralPath (Join-Path $codexDirectory "AGENTS.md") -Value "# Existing Codex instructions" -Encoding UTF8
     $env:USERPROFILE = $profilePath
 
+    $malformedProfile = Join-Path $sandbox "malformed-profile"
+    $malformedBase = Join-Path $sandbox "malformed-vaults"
+    $malformedCodexDirectory = Join-Path $malformedProfile ".codex"
+    New-Item -ItemType Directory -Path $malformedCodexDirectory -Force | Out-Null
+    $malformedConfig = Join-Path $malformedCodexDirectory "AGENTS.md"
+    Set-Content -LiteralPath $malformedConfig -Value "<!-- OBSIDIAN-AI-MEMORY:START -->" -Encoding UTF8
+    $env:USERPROFILE = $malformedProfile
+    $malformedOutput = & pwsh -NoProfile -File $installer -BasePath $malformedBase -VaultName "MalformedMemory" -Tools Codex 2>&1 | Out-String
+    Assert-True ($LASTEXITCODE -ne 0) "Installer accepted a malformed managed block."
+    Assert-True ($malformedOutput.Contains("Malformed managed block; no changes made")) "Installer did not explain the malformed block."
+    Assert-True (-not (Test-Path -LiteralPath (Join-Path $malformedBase "MalformedMemory"))) "Malformed configuration created a vault."
+    Assert-True ((Get-Content -LiteralPath $malformedConfig -Raw).Trim() -eq "<!-- OBSIDIAN-AI-MEMORY:START -->") "Malformed configuration was changed."
+    $env:USERPROFILE = $profilePath
+
     & $installer -BasePath $basePath -VaultName "TestMemory" -Tools Codex, Claude, Generic
 
     $vaultPath = Join-Path $basePath "TestMemory"
