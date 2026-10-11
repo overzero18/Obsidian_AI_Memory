@@ -5,7 +5,7 @@
 set -eu
 
 repository="overzero18/obsidian-ai-memory-windows"
-release_base="https://github.com/$repository/releases/latest/download"
+api_url="https://api.github.com/repos/$repository/releases/latest"
 temp_dir=$(mktemp -d "${TMPDIR:-/tmp}/obsidian-ai-memory-bootstrap.XXXXXX")
 trap 'rm -rf "$temp_dir"' EXIT HUP INT TERM
 
@@ -41,8 +41,16 @@ command -v unzip >/dev/null 2>&1 || {
 
 archive="$temp_dir/obsidian-ai-memory.zip"
 checksum="$temp_dir/obsidian-ai-memory.zip.sha256"
+metadata="$temp_dir/release.json"
 
 echo "Downloading the latest Obsidian AI Memory release..."
+download "$api_url" "$metadata"
+tag=$(sed -n 's/.*"tag_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$metadata" | awk 'NR == 1 { print; exit }')
+if [ -z "$tag" ]; then
+    echo "Could not determine the latest release tag." >&2
+    exit 1
+fi
+release_base="https://github.com/$repository/releases/download/$tag"
 download "$release_base/obsidian-ai-memory.zip" "$archive"
 download "$release_base/obsidian-ai-memory.zip.sha256" "$checksum"
 
