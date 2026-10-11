@@ -75,6 +75,14 @@ La ubicación predeterminada es `~/Documents/ObsidianAI/MemoriaIA`.
 
 Si falta una herramienta para la descarga, instala `curl` y `unzip` con el gestor de paquetes de tu distribución y repite los dos comandos. El instalador no solicita privilegios de administrador ni modifica paquetes del sistema.
 
+Para una copia portátil que se conserva en la carpeta actual:
+
+```bash
+sh bootstrap.sh --portable
+```
+
+Creará `obsidian-ai-memory-portable/`; puedes cambiar esa ubicación con la variable `OBSIDIAN_AI_MEMORY_PORTABLE_DIR`.
+
 ### Modo portátil
 
 Para llevar una bóveda vacía junto al repositorio o archivo descargado, sin modificar configuraciones globales:

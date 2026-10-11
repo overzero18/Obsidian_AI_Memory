@@ -1,10 +1,11 @@
 # Historial de cambios
 
-## 2.1.0 - 2026-10-11
+## 2.1.1 - 2026-10-11
 
 ### Añadido
 
 - `bootstrap.sh` para Linux y macOS: descarga el último paquete publicado, verifica SHA-256 y ejecuta el instalador normal sin requerir Git.
+- El modo portátil iniciado desde `bootstrap.sh` conserva su carpeta en el directorio actual, en vez de usar una ubicación temporal.
 - Bóveda única y neutral para Codex, Claude y asistentes compatibles con Markdown local.
 - Instalación segura en Windows, Linux y macOS.
 - Protocolo de memoria, incorporación genérica y plantillas de notas atómicas.

@@ -62,5 +62,23 @@ if [ -z "$installer" ] || [ ! -f "$installer" ]; then
     exit 1
 fi
 
+portable=0
+for argument in "$@"; do
+    [ "$argument" = "--portable" ] && portable=1
+done
+
+if [ "$portable" -eq 1 ]; then
+    portable_dir="${OBSIDIAN_AI_MEMORY_PORTABLE_DIR:-$PWD/obsidian-ai-memory-portable}"
+    if [ -e "$portable_dir" ]; then
+        echo "Portable folder already exists: $portable_dir" >&2
+        echo "Choose another folder with OBSIDIAN_AI_MEMORY_PORTABLE_DIR or install from the ZIP." >&2
+        exit 1
+    fi
+    mkdir -p "$(dirname "$portable_dir")"
+    cp -R "$(dirname "$installer")" "$portable_dir"
+    installer="$portable_dir/INSTALL.sh"
+    echo "Keeping the portable package in: $portable_dir"
+fi
+
 echo "Verified release. Starting the installer..."
 exec sh "$installer" "$@"
