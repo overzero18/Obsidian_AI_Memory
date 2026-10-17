@@ -238,6 +238,10 @@ El diseño combina índices de proyecto con notas atómicas enlazadas. No obliga
 
 Para tareas largas, consulta [Memoria y contexto de trabajo](docs/MEMORY-AND-CONTEXT.md). Explica qué debe permanecer en el contexto temporal, qué puede anotarse como relevo dentro del repositorio y qué información verificada merece pasar a la bóveda.
 
+## Capacidades opcionales del asistente
+
+Una capacidad o *skill* puede ayudar a un asistente a analizar datos, redactar documentación o seguir un procedimiento especializado. No sustituye a la bóveda ni es necesaria para usar este proyecto: la bóveda conserva el contexto duradero y la capacidad mejora la ejecución de una tarea concreta. Consulta [cómo combinarlas de forma segura](docs/CAPABILITIES.md).
+
 ## Conectar otra IA
 
 Abre `AI-ONBOARDING.md` dentro de la bóveda. Contiene una instrucción reutilizable y explica los límites:
